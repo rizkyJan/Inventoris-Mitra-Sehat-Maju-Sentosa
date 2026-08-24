@@ -1,404 +1,767 @@
 // ======================================================
 // INVENTARIS FRONTEND
+// CLOUDFLARE WORKER VERSION
 // ======================================================
 
-console.log("APP INVENTARIS V20 DIMUAT");
+console.log(
+  "INVENTARIS CLOUDFLARE VERSION AKTIF"
+);
+
 
 let inventoryData = [];
 
 let editingId = null;
 
+
 // ======================================================
 // ELEMENT
 // ======================================================
 
-const tableBody = document.getElementById("tableBody");
+const tableBody =
+  document.getElementById(
+    "tableBody"
+  );
 
-const mobileList = document.getElementById("mobileList");
+const mobileList =
+  document.getElementById(
+    "mobileList"
+  );
 
-const loading = document.getElementById("loading");
+const loading =
+  document.getElementById(
+    "loading"
+  );
 
-const emptyState = document.getElementById("emptyState");
+const emptyState =
+  document.getElementById(
+    "emptyState"
+  );
 
-const searchInput = document.getElementById("searchInput");
+const searchInput =
+  document.getElementById(
+    "searchInput"
+  );
 
-const filterKeadaan = document.getElementById("filterKeadaan");
+const filterKeadaan =
+  document.getElementById(
+    "filterKeadaan"
+  );
 
-const totalJenis = document.getElementById("totalJenis");
 
-const totalUnit = document.getElementById("totalUnit");
+const totalJenis =
+  document.getElementById(
+    "totalJenis"
+  );
 
-const totalBaik = document.getElementById("totalBaik");
+const totalUnit =
+  document.getElementById(
+    "totalUnit"
+  );
 
-const totalMasalah = document.getElementById("totalMasalah");
+const totalBaik =
+  document.getElementById(
+    "totalBaik"
+  );
 
-const btnTambah = document.getElementById("btnTambah");
+const totalMasalah =
+  document.getElementById(
+    "totalMasalah"
+  );
 
-const modalForm = document.getElementById("modalForm");
 
-const modalTitle = document.getElementById("modalTitle");
+const btnTambah =
+  document.getElementById(
+    "btnTambah"
+  );
 
-const btnCloseModal = document.getElementById("btnCloseModal");
+const modalForm =
+  document.getElementById(
+    "modalForm"
+  );
 
-const btnBatal = document.getElementById("btnBatal");
+const modalTitle =
+  document.getElementById(
+    "modalTitle"
+  );
 
-const btnSimpan = document.getElementById("btnSimpan");
+const btnCloseModal =
+  document.getElementById(
+    "btnCloseModal"
+  );
 
-const inventoryForm = document.getElementById("inventoryForm");
+const btnBatal =
+  document.getElementById(
+    "btnBatal"
+  );
 
-const inventoryId = document.getElementById("inventoryId");
+const btnSimpan =
+  document.getElementById(
+    "btnSimpan"
+  );
 
-const nomorSeri = document.getElementById("nomorSeri");
 
-const namaAlat = document.getElementById("namaAlat");
+const inventoryForm =
+  document.getElementById(
+    "inventoryForm"
+  );
 
-const jumlah = document.getElementById("jumlah");
+const inventoryId =
+  document.getElementById(
+    "inventoryId"
+  );
 
-const tahunPerolehan = document.getElementById("tahunPerolehan");
+const nomorSeri =
+  document.getElementById(
+    "nomorSeri"
+  );
 
-const keadaan = document.getElementById("keadaan");
+const namaAlat =
+  document.getElementById(
+    "namaAlat"
+  );
 
-const keterangan = document.getElementById("keterangan");
+const jumlah =
+  document.getElementById(
+    "jumlah"
+  );
 
-const toast = document.getElementById("toast");
+const tahunPerolehan =
+  document.getElementById(
+    "tahunPerolehan"
+  );
+
+const keadaan =
+  document.getElementById(
+    "keadaan"
+  );
+
+const keterangan =
+  document.getElementById(
+    "keterangan"
+  );
+
+const toast =
+  document.getElementById(
+    "toast"
+  );
+
 
 // ======================================================
-// UTILITAS
+// ESCAPE HTML
 // ======================================================
 
 function escapeHTML(value) {
-  if (value === null || value === undefined) {
+
+  if (
+    value === null ||
+    value === undefined
+  ) {
     return "";
   }
 
+
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
 }
 
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
 // ======================================================
 // TOAST
 // ======================================================
 
-function showToast(message, type = "success") {
-  toast.textContent = message;
+function showToast(
+  message,
+  type = "success"
+) {
 
-  toast.className = `toast ${type} show`;
+  toast.textContent =
+    message;
 
-  setTimeout(function () {
-    toast.className = "toast";
-  }, 3500);
+
+  toast.className =
+    `toast ${type} show`;
+
+
+  setTimeout(
+    function () {
+
+      toast.className =
+        "toast";
+
+    },
+    3500
+  );
+
 }
 
+
 // ======================================================
-// GET DATA DENGAN JSONP
+// GET DATA INVENTARIS
 // ======================================================
 
-function loadInventory() {
-  return new Promise((resolve, reject) => {
-    loading.classList.remove("hidden");
+async function loadInventory() {
 
-    emptyState.classList.add("hidden");
+  try {
 
-    const callbackName =
-      "inventoryCallback_" +
-      Date.now() +
-      "_" +
-      Math.floor(Math.random() * 100000);
+    loading.classList.remove(
+      "hidden"
+    );
 
-    const script = document.createElement("script");
 
-    let selesai = false;
+    emptyState.classList.add(
+      "hidden"
+    );
 
-    function cleanup() {
-      if (selesai) {
-        return;
-      }
 
-      selesai = true;
+    const response =
+      await fetch(
 
-      clearTimeout(timeout);
+        CONFIG.API_URL +
+        "?action=list",
 
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
+        {
 
-      try {
-        delete window[callbackName];
-      } catch (error) {
-        window[callbackName] = undefined;
-      }
+          method:
+            "GET",
+
+          cache:
+            "no-store"
+
+        }
+
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Gagal mengambil data."
+      );
+
     }
 
-    const timeout = setTimeout(function () {
-      cleanup();
 
-      loading.classList.add("hidden");
+    if (
+      !result.success
+    ) {
 
-      const error = new Error("Waktu koneksi ke database habis.");
+      throw new Error(
+        result.message ||
+        "Database gagal memberikan data."
+      );
 
-      showToast(error.message, "error");
+    }
 
-      reject(error);
-    }, 15000);
 
-    window[callbackName] = function (result) {
-      cleanup();
+    inventoryData =
+      Array.isArray(
+        result.data
+      )
+        ? result.data
+        : [];
 
-      loading.classList.add("hidden");
 
-      if (!result || !result.success) {
-        const message =
-          result && result.message
-            ? result.message
-            : "Gagal mengambil data inventaris.";
+    updateDashboard();
 
-        showToast(message, "error");
 
-        reject(new Error(message));
+    applyFilter();
 
-        return;
-      }
 
-      inventoryData = Array.isArray(result.data) ? result.data : [];
+    return inventoryData;
 
-      updateDashboard();
 
-      applyFilter();
+  } catch (error) {
 
-      resolve(inventoryData);
-    };
+    console.error(
+      "LOAD ERROR:",
+      error
+    );
 
-    script.onerror = function () {
-      cleanup();
 
-      loading.classList.add("hidden");
+    showToast(
+      error.message ||
+      "Tidak dapat terhubung ke server.",
+      "error"
+    );
 
-      const error = new Error("Tidak dapat terhubung ke Google Apps Script.");
 
-      showToast(error.message, "error");
+    return [];
 
-      reject(error);
-    };
 
-    script.src =
-      CONFIG.API_URL +
-      "?action=list" +
-      "&callback=" +
-      encodeURIComponent(callbackName) +
-      "&_=" +
-      Date.now();
+  } finally {
 
-    document.body.appendChild(script);
-  });
+    loading.classList.add(
+      "hidden"
+    );
+
+  }
+
 }
 
+
 // ======================================================
-// POST KE GAS DENGAN FORM TERSEMBUNYI
+// POST DATA
 // ======================================================
 
-function postToGAS(data) {
-  return new Promise((resolve) => {
-    const iframeName =
-      "gas_iframe_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+async function postToGAS(
+  data
+) {
 
-    const iframe = document.createElement("iframe");
+  const body =
+    new URLSearchParams();
 
-    iframe.name = iframeName;
 
-    iframe.id = iframeName;
+  Object.entries(
+    data
+  ).forEach(
+    function (
+      [key, value]
+    ) {
 
-    iframe.style.display = "none";
+      body.append(
 
-    document.body.appendChild(iframe);
+        key,
 
-    const form = document.createElement("form");
+        value === undefined ||
+        value === null
+          ? ""
+          : String(value)
 
-    form.method = "POST";
+      );
 
-    form.action = CONFIG.API_URL;
+    }
+  );
 
-    form.target = iframeName;
 
-    form.style.display = "none";
+  const response =
+    await fetch(
 
-    Object.keys(data).forEach(function (key) {
-      const input = document.createElement("input");
+      CONFIG.API_URL,
 
-      input.type = "hidden";
+      {
 
-      input.name = key;
+        method:
+          "POST",
 
-      input.value =
-        data[key] === undefined || data[key] === null ? "" : String(data[key]);
+        headers: {
 
-      form.appendChild(input);
-    });
+          "Content-Type":
+            "application/x-www-form-urlencoded;charset=UTF-8"
 
-    document.body.appendChild(form);
+        },
 
-    console.log("POST GAS:", data);
+        body:
+          body
 
-    form.submit();
-
-    // GAS memerlukan sedikit waktu
-    setTimeout(function () {
-      try {
-        form.remove();
-
-        iframe.remove();
-      } catch (error) {
-        console.log(error);
       }
 
-      resolve();
-    }, 1800);
-  });
+    );
+
+
+  const result =
+    await response.json();
+
+
+  if (
+    !response.ok
+  ) {
+
+    throw new Error(
+      result.message ||
+      "Request gagal."
+    );
+
+  }
+
+
+  if (
+    !result.success
+  ) {
+
+    throw new Error(
+      result.message ||
+      "Operasi database gagal."
+    );
+
+  }
+
+
+  return result;
+
 }
+
 
 // ======================================================
 // DASHBOARD
 // ======================================================
 
 function updateDashboard() {
-  const jumlahJenis = inventoryData.length;
 
-  const jumlahUnit = inventoryData.reduce(function (total, item) {
-    return total + Number(item.jumlah || 0);
-  }, 0);
+  // Total jenis / record alat
+  const jumlahJenis =
+    inventoryData.length;
 
-  const jumlahBaik = inventoryData
-    .filter((item) => item.keadaan === "Baik")
-    .reduce(function (total, item) {
-      return total + Number(item.jumlah || 0);
-    }, 0);
 
-  const jumlahMasalah = inventoryData
-    .filter((item) => item.keadaan !== "Baik")
-    .reduce(function (total, item) {
-      return total + Number(item.jumlah || 0);
-    }, 0);
+  // Total semua unit
+  const jumlahUnit =
+    inventoryData.reduce(
 
-  totalJenis.textContent = jumlahJenis;
+      function (
+        total,
+        item
+      ) {
 
-  totalUnit.textContent = jumlahUnit;
+        return (
+          total +
+          Number(
+            item.jumlah || 0
+          )
+        );
 
-  totalBaik.textContent = jumlahBaik;
+      },
 
-  totalMasalah.textContent = jumlahMasalah;
+      0
+
+    );
+
+
+  // Unit kondisi baik
+  const jumlahBaik =
+    inventoryData
+
+      .filter(
+        function (item) {
+
+          return (
+            item.keadaan ===
+            "Baik"
+          );
+
+        }
+      )
+
+      .reduce(
+
+        function (
+          total,
+          item
+        ) {
+
+          return (
+            total +
+            Number(
+              item.jumlah || 0
+            )
+          );
+
+        },
+
+        0
+
+      );
+
+
+  // Unit selain baik
+  const jumlahMasalah =
+    inventoryData
+
+      .filter(
+        function (item) {
+
+          return (
+            item.keadaan !==
+            "Baik"
+          );
+
+        }
+      )
+
+      .reduce(
+
+        function (
+          total,
+          item
+        ) {
+
+          return (
+            total +
+            Number(
+              item.jumlah || 0
+            )
+          );
+
+        },
+
+        0
+
+      );
+
+
+  totalJenis.textContent =
+    jumlahJenis;
+
+
+  totalUnit.textContent =
+    jumlahUnit;
+
+
+  totalBaik.textContent =
+    jumlahBaik;
+
+
+  totalMasalah.textContent =
+    jumlahMasalah;
+
 }
+
 
 // ======================================================
 // FILTER
 // ======================================================
 
 function applyFilter() {
-  const keyword = searchInput.value.trim().toLowerCase();
 
-  const selectedKeadaan = filterKeadaan.value;
+  const keyword =
+    searchInput.value
+      .trim()
+      .toLowerCase();
 
-  const filtered = inventoryData.filter(function (item) {
-    const nama = String(item.nama_alat || "").toLowerCase();
 
-    const seri = String(item.nomor_seri || "").toLowerCase();
+  const filter =
+    filterKeadaan.value;
 
-    const keteranganText = String(item.keterangan || "").toLowerCase();
 
-    const cocokSearch =
-      !keyword ||
-      nama.includes(keyword) ||
-      seri.includes(keyword) ||
-      keteranganText.includes(keyword);
+  const data =
+    inventoryData.filter(
 
-    const cocokKeadaan = !selectedKeadaan || item.keadaan === selectedKeadaan;
+      function (item) {
 
-    return cocokSearch && cocokKeadaan;
-  });
+        const seri =
+          String(
+            item.nomor_seri || ""
+          )
+            .toLowerCase();
 
-  renderTable(filtered);
 
-  renderMobile(filtered);
+        const nama =
+          String(
+            item.nama_alat || ""
+          )
+            .toLowerCase();
+
+
+        const ket =
+          String(
+            item.keterangan || ""
+          )
+            .toLowerCase();
+
+
+        const cocokCari =
+          !keyword ||
+
+          seri.includes(
+            keyword
+          ) ||
+
+          nama.includes(
+            keyword
+          ) ||
+
+          ket.includes(
+            keyword
+          );
+
+
+        const cocokKeadaan =
+          !filter ||
+          item.keadaan ===
+            filter;
+
+
+        return (
+          cocokCari &&
+          cocokKeadaan
+        );
+
+      }
+
+    );
+
+
+  renderTable(
+    data
+  );
+
+
+  renderMobile(
+    data
+  );
+
 }
+
 
 // ======================================================
 // BADGE
 // ======================================================
 
-function getBadgeClass(status) {
+function getBadgeClass(
+  status
+) {
+
   switch (status) {
+
     case "Baik":
+
       return "badge-baik";
 
+
     case "Rusak Ringan":
+
       return "badge-rusak-ringan";
 
+
     case "Rusak Berat":
+
       return "badge-rusak-berat";
 
+
     case "Dalam Perbaikan":
+
       return "badge-perbaikan";
 
+
     case "Tidak Digunakan":
+
       return "badge-tidak-digunakan";
 
+
     default:
+
       return "badge-tidak-digunakan";
+
   }
+
 }
+
 
 // ======================================================
 // TABLE DESKTOP
 // ======================================================
 
-function renderTable(data) {
-  tableBody.innerHTML = "";
+function renderTable(
+  data
+) {
 
-  if (data.length === 0) {
-    emptyState.classList.remove("hidden");
+  tableBody.innerHTML =
+    "";
+
+
+  if (
+    data.length === 0
+  ) {
+
+    emptyState.classList.remove(
+      "hidden"
+    );
 
     return;
+
   }
 
-  emptyState.classList.add("hidden");
 
-  data.forEach(function (item) {
-    const row = document.createElement("tr");
+  emptyState.classList.add(
+    "hidden"
+  );
 
-    row.innerHTML = `
+
+  data.forEach(
+    function (item) {
+
+      const row =
+        document.createElement(
+          "tr"
+        );
+
+
+      row.innerHTML = `
 
         <td>
-          ${escapeHTML(item.nomor)}
+          ${escapeHTML(
+            item.nomor
+          )}
         </td>
 
 
         <td>
 
           <strong>
-            ${escapeHTML(item.nomor_seri)}
+
+            ${escapeHTML(
+              item.nomor_seri
+            )}
+
           </strong>
 
         </td>
 
 
         <td>
-          ${escapeHTML(item.nama_alat)}
+
+          ${escapeHTML(
+            item.nama_alat
+          )}
+
         </td>
 
 
         <td>
-          ${escapeHTML(item.jumlah)}
+
+          ${escapeHTML(
+            item.jumlah
+          )}
+
         </td>
 
 
         <td>
-          ${escapeHTML(item.tahun_perolehan)}
+
+          ${escapeHTML(
+            item.tahun_perolehan
+          )}
+
         </td>
 
 
@@ -407,11 +770,15 @@ function renderTable(data) {
           <span
             class="
               badge
-              ${getBadgeClass(item.keadaan)}
+              ${getBadgeClass(
+                item.keadaan
+              )}
             "
           >
 
-            ${escapeHTML(item.keadaan)}
+            ${escapeHTML(
+              item.keadaan
+            )}
 
           </span>
 
@@ -420,7 +787,10 @@ function renderTable(data) {
 
         <td>
 
-          ${escapeHTML(item.keterangan || "-")}
+          ${escapeHTML(
+            item.keterangan ||
+            "-"
+          )}
 
         </td>
 
@@ -438,7 +808,9 @@ function renderTable(data) {
                 action-edit
               "
               data-action="edit"
-              data-id="${escapeHTML(item.id)}"
+              data-id="${escapeHTML(
+                item.id
+              )}"
             >
               Edit
             </button>
@@ -451,7 +823,9 @@ function renderTable(data) {
                 action-delete
               "
               data-action="delete"
-              data-id="${escapeHTML(item.id)}"
+              data-id="${escapeHTML(
+                item.id
+              )}"
             >
               Hapus
             </button>
@@ -462,23 +836,43 @@ function renderTable(data) {
 
       `;
 
-    tableBody.appendChild(row);
-  });
+
+      tableBody.appendChild(
+        row
+      );
+
+    }
+  );
+
 }
+
 
 // ======================================================
 // MOBILE
 // ======================================================
 
-function renderMobile(data) {
-  mobileList.innerHTML = "";
+function renderMobile(
+  data
+) {
 
-  data.forEach(function (item) {
-    const card = document.createElement("div");
+  mobileList.innerHTML =
+    "";
 
-    card.className = "mobile-card";
 
-    card.innerHTML = `
+  data.forEach(
+    function (item) {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "mobile-card";
+
+
+      card.innerHTML = `
 
         <div
           class="mobile-card-header"
@@ -490,7 +884,9 @@ function renderMobile(data) {
               class="mobile-card-title"
             >
 
-              ${escapeHTML(item.nama_alat)}
+              ${escapeHTML(
+                item.nama_alat
+              )}
 
             </div>
 
@@ -499,7 +895,9 @@ function renderMobile(data) {
               class="mobile-card-serial"
             >
 
-              ${escapeHTML(item.nomor_seri)}
+              ${escapeHTML(
+                item.nomor_seri
+              )}
 
             </div>
 
@@ -509,16 +907,19 @@ function renderMobile(data) {
           <span
             class="
               badge
-              ${getBadgeClass(item.keadaan)}
+              ${getBadgeClass(
+                item.keadaan
+              )}
             "
           >
 
-            ${escapeHTML(item.keadaan)}
+            ${escapeHTML(
+              item.keadaan
+            )}
 
           </span>
 
         </div>
-
 
 
         <div
@@ -533,7 +934,9 @@ function renderMobile(data) {
 
             <strong>
 
-              ${escapeHTML(item.jumlah)}
+              ${escapeHTML(
+                item.jumlah
+              )}
 
             </strong>
 
@@ -548,14 +951,15 @@ function renderMobile(data) {
 
             <strong>
 
-              ${escapeHTML(item.tahun_perolehan)}
+              ${escapeHTML(
+                item.tahun_perolehan
+              )}
 
             </strong>
 
           </div>
 
         </div>
-
 
 
         <div
@@ -575,10 +979,13 @@ function renderMobile(data) {
             Keterangan
           </span>
 
-          ${escapeHTML(item.keterangan || "-")}
+
+          ${escapeHTML(
+            item.keterangan ||
+            "-"
+          )}
 
         </div>
-
 
 
         <div
@@ -592,7 +999,9 @@ function renderMobile(data) {
               action-edit
             "
             data-action="edit"
-            data-id="${escapeHTML(item.id)}"
+            data-id="${escapeHTML(
+              item.id
+            )}"
           >
             Edit
           </button>
@@ -605,7 +1014,9 @@ function renderMobile(data) {
               action-delete
             "
             data-action="delete"
-            data-id="${escapeHTML(item.id)}"
+            data-id="${escapeHTML(
+              item.id
+            )}"
           >
             Hapus
           </button>
@@ -614,296 +1025,563 @@ function renderMobile(data) {
 
       `;
 
-    mobileList.appendChild(card);
-  });
+
+      mobileList.appendChild(
+        card
+      );
+
+    }
+  );
+
 }
+
 
 // ======================================================
 // MODAL
 // ======================================================
 
 function openModal() {
-  modalForm.classList.remove("hidden");
 
-  document.body.style.overflow = "hidden";
+  modalForm.classList.remove(
+    "hidden"
+  );
+
+
+  document.body.style.overflow =
+    "hidden";
+
 }
+
 
 function closeModal() {
-  modalForm.classList.add("hidden");
 
-  document.body.style.overflow = "";
+  modalForm.classList.add(
+    "hidden"
+  );
+
+
+  document.body.style.overflow =
+    "";
+
 
   resetForm();
+
 }
 
+
 // ======================================================
-// RESET
+// RESET FORM
 // ======================================================
 
 function resetForm() {
+
   inventoryForm.reset();
 
-  editingId = null;
 
-  inventoryId.value = "";
+  editingId =
+    null;
 
-  modalTitle.textContent = "Tambah Inventaris";
 
-  btnSimpan.textContent = "Simpan Data";
+  inventoryId.value =
+    "";
 
-  tahunPerolehan.max = new Date().getFullYear();
+
+  modalTitle.textContent =
+    "Tambah Inventaris";
+
+
+  btnSimpan.textContent =
+    "Simpan Data";
+
+
+  tahunPerolehan.max =
+    new Date().getFullYear();
+
 }
+
 
 // ======================================================
 // TAMBAH
 // ======================================================
 
 function openAddForm() {
+
   resetForm();
 
-  tahunPerolehan.value = new Date().getFullYear();
 
-  keadaan.value = "Baik";
+  tahunPerolehan.value =
+    new Date().getFullYear();
+
+
+  keadaan.value =
+    "Baik";
+
 
   openModal();
+
 }
+
 
 // ======================================================
 // EDIT
 // ======================================================
 
-function editInventory(id) {
-  const item = inventoryData.find(function (data) {
-    return String(data.id) === String(id);
-  });
+function editInventory(
+  id
+) {
+
+  const item =
+    inventoryData.find(
+
+      function (data) {
+
+        return (
+          String(
+            data.id
+          ) ===
+          String(id)
+        );
+
+      }
+
+    );
+
 
   if (!item) {
-    showToast("Data tidak ditemukan.", "error");
+
+    showToast(
+      "Data tidak ditemukan.",
+      "error"
+    );
 
     return;
+
   }
 
-  editingId = item.id;
 
-  inventoryId.value = item.id;
+  editingId =
+    item.id;
 
-  nomorSeri.value = item.nomor_seri;
 
-  namaAlat.value = item.nama_alat;
+  inventoryId.value =
+    item.id;
 
-  jumlah.value = item.jumlah;
 
-  tahunPerolehan.value = item.tahun_perolehan;
+  nomorSeri.value =
+    item.nomor_seri;
 
-  keadaan.value = item.keadaan;
 
-  keterangan.value = item.keterangan || "";
+  namaAlat.value =
+    item.nama_alat;
 
-  modalTitle.textContent = "Edit Inventaris";
 
-  btnSimpan.textContent = "Simpan Perubahan";
+  jumlah.value =
+    item.jumlah;
+
+
+  tahunPerolehan.value =
+    item.tahun_perolehan;
+
+
+  keadaan.value =
+    item.keadaan;
+
+
+  keterangan.value =
+    item.keterangan || "";
+
+
+  modalTitle.textContent =
+    "Edit Inventaris";
+
+
+  btnSimpan.textContent =
+    "Simpan Perubahan";
+
 
   openModal();
+
 }
+
 
 // ======================================================
 // SIMPAN / UPDATE
 // ======================================================
 
-inventoryForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
+inventoryForm.addEventListener(
 
-  const isEdit = Boolean(editingId);
+  "submit",
 
-  const serialTarget = nomorSeri.value.trim().toLowerCase();
+  async function (event) {
 
-  const idTarget = editingId;
+    event.preventDefault();
 
-  const data = {
-    action: isEdit ? "update" : "add",
 
-    nomor_seri: nomorSeri.value.trim(),
+    const isEdit =
+      Boolean(
+        editingId
+      );
 
-    nama_alat: namaAlat.value.trim(),
 
-    jumlah: jumlah.value,
+    const data = {
 
-    tahun_perolehan: tahunPerolehan.value,
+      action:
+        isEdit
+          ? "update"
+          : "add",
 
-    keadaan: keadaan.value,
+      nomor_seri:
+        nomorSeri.value.trim(),
 
-    keterangan: keterangan.value.trim(),
-  };
+      nama_alat:
+        namaAlat.value.trim(),
 
-  if (isEdit) {
-    data.id = editingId;
-  }
+      jumlah:
+        jumlah.value,
 
-  try {
-    btnSimpan.disabled = true;
+      tahun_perolehan:
+        tahunPerolehan.value,
 
-    btnSimpan.textContent = isEdit ? "Menyimpan Perubahan..." : "Menyimpan...";
+      keadaan:
+        keadaan.value,
 
-    await postToGAS(data);
+      keterangan:
+        keterangan.value.trim()
 
-    // beri waktu GAS menulis
-    await delay(1200);
+    };
 
-    await loadInventory();
-
-    let berhasil = false;
 
     if (isEdit) {
-      berhasil = inventoryData.some(function (item) {
-        return (
-          String(item.id) === String(idTarget) &&
-          String(item.nomor_seri).trim().toLowerCase() === serialTarget
-        );
-      });
-    } else {
-      berhasil = inventoryData.some(function (item) {
-        return String(item.nomor_seri).trim().toLowerCase() === serialTarget;
-      });
+
+      data.id =
+        editingId;
+
     }
 
-    if (berhasil) {
+
+    try {
+
+      btnSimpan.disabled =
+        true;
+
+
+      btnSimpan.textContent =
+        isEdit
+          ? "Menyimpan Perubahan..."
+          : "Menyimpan...";
+
+
+      const result =
+        await postToGAS(
+          data
+        );
+
+
       closeModal();
 
+
       showToast(
-        isEdit ? "Data berhasil diperbarui." : "Data berhasil ditambahkan.",
-        "success",
+        result.message ||
+        (
+          isEdit
+            ? "Data berhasil diperbarui."
+            : "Data berhasil ditambahkan."
+        ),
+        "success"
       );
-    } else {
+
+
+      await loadInventory();
+
+
+    } catch (error) {
+
+      console.error(
+        "SAVE ERROR:",
+        error
+      );
+
+
       showToast(
-        "Data belum masuk ke database. Cek Eksekusi Apps Script.",
-        "error",
+        error.message ||
+        "Gagal menyimpan data.",
+        "error"
       );
+
+
+    } finally {
+
+      btnSimpan.disabled =
+        false;
+
+
+      btnSimpan.textContent =
+        isEdit
+          ? "Simpan Perubahan"
+          : "Simpan Data";
+
     }
-  } catch (error) {
-    console.error("SAVE ERROR:", error);
 
-    showToast("Gagal menyimpan data.", "error");
-  } finally {
-    btnSimpan.disabled = false;
-
-    btnSimpan.textContent = isEdit ? "Simpan Perubahan" : "Simpan Data";
   }
-});
+
+);
+
 
 // ======================================================
 // DELETE
 // ======================================================
 
-async function deleteInventory(id) {
-  const item = inventoryData.find(function (data) {
-    return String(data.id) === String(id);
-  });
+async function deleteInventory(
+  id
+) {
+
+  const item =
+    inventoryData.find(
+
+      function (data) {
+
+        return (
+          String(
+            data.id
+          ) ===
+          String(id)
+        );
+
+      }
+
+    );
+
 
   if (!item) {
-    showToast("Data tidak ditemukan.", "error");
+
+    showToast(
+      "Data tidak ditemukan.",
+      "error"
+    );
 
     return;
+
   }
 
-  const yakin = confirm(
-    `Apakah Anda yakin ingin menghapus "${item.nama_alat}"?`,
-  );
+
+  const yakin =
+    confirm(
+      `Apakah Anda yakin ingin menghapus "${item.nama_alat}"?`
+    );
+
 
   if (!yakin) {
     return;
   }
 
+
   try {
-    await postToGAS({
-      action: "delete",
 
-      id: id,
-    });
+    const result =
+      await postToGAS({
 
-    await delay(1200);
+        action:
+          "delete",
+
+        id:
+          id
+
+      });
+
+
+    showToast(
+      result.message ||
+      "Data berhasil dihapus.",
+      "success"
+    );
+
 
     await loadInventory();
 
-    const masihAda = inventoryData.some(function (data) {
-      return String(data.id) === String(id);
-    });
 
-    if (!masihAda) {
-      showToast("Data berhasil dihapus.", "success");
-    } else {
-      showToast("Data belum berhasil dihapus.", "error");
-    }
   } catch (error) {
-    console.error("DELETE ERROR:", error);
 
-    showToast("Gagal menghapus data.", "error");
+    console.error(
+      "DELETE ERROR:",
+      error
+    );
+
+
+    showToast(
+      error.message ||
+      "Gagal menghapus data.",
+      "error"
+    );
+
   }
+
 }
 
+
 // ======================================================
-// ACTION BUTTON
+// BUTTON EDIT / DELETE
 // ======================================================
 
-document.addEventListener("click", function (event) {
-  const button = event.target.closest("[data-action]");
+document.addEventListener(
 
-  if (!button) {
-    return;
+  "click",
+
+  function (event) {
+
+    const button =
+      event.target.closest(
+        "[data-action]"
+      );
+
+
+    if (!button) {
+      return;
+    }
+
+
+    const action =
+      button.dataset.action;
+
+
+    const id =
+      button.dataset.id;
+
+
+    if (
+      action === "edit"
+    ) {
+
+      editInventory(
+        id
+      );
+
+    }
+
+
+    if (
+      action === "delete"
+    ) {
+
+      deleteInventory(
+        id
+      );
+
+    }
+
   }
 
-  const action = button.dataset.action;
+);
 
-  const id = button.dataset.id;
-
-  if (action === "edit") {
-    editInventory(id);
-  }
-
-  if (action === "delete") {
-    deleteInventory(id);
-  }
-});
 
 // ======================================================
 // SEARCH
 // ======================================================
 
-searchInput.addEventListener("input", applyFilter);
+searchInput.addEventListener(
 
-filterKeadaan.addEventListener("change", applyFilter);
+  "input",
+
+  applyFilter
+
+);
+
+
+filterKeadaan.addEventListener(
+
+  "change",
+
+  applyFilter
+
+);
+
 
 // ======================================================
-// MODAL EVENT
+// MODAL BUTTON
 // ======================================================
 
-btnTambah.addEventListener("click", openAddForm);
+btnTambah.addEventListener(
 
-btnCloseModal.addEventListener("click", closeModal);
+  "click",
 
-btnBatal.addEventListener("click", closeModal);
+  openAddForm
 
-document.querySelector(".modal-overlay").addEventListener("click", closeModal);
+);
+
+
+btnCloseModal.addEventListener(
+
+  "click",
+
+  closeModal
+
+);
+
+
+btnBatal.addEventListener(
+
+  "click",
+
+  closeModal
+
+);
+
+
+document
+  .querySelector(
+    ".modal-overlay"
+  )
+  .addEventListener(
+
+    "click",
+
+    closeModal
+
+  );
+
 
 // ======================================================
 // ESC
 // ======================================================
 
-document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape" && !modalForm.classList.contains("hidden")) {
-    closeModal();
+document.addEventListener(
+
+  "keydown",
+
+  function (event) {
+
+    if (
+      event.key ===
+        "Escape" &&
+      !modalForm.classList.contains(
+        "hidden"
+      )
+    ) {
+
+      closeModal();
+
+    }
+
   }
-});
+
+);
+
 
 // ======================================================
 // START
 // ======================================================
 
-document.addEventListener("DOMContentLoaded", async function () {
-  tahunPerolehan.max = new Date().getFullYear();
+document.addEventListener(
 
-  try {
+  "DOMContentLoaded",
+
+  async function () {
+
+    tahunPerolehan.max =
+      new Date().getFullYear();
+
+
     await loadInventory();
-  } catch (error) {
-    console.error("LOAD AWAL ERROR:", error);
+
   }
-});
+
+);
