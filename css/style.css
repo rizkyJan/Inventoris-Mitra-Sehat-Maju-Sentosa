@@ -1119,3 +1119,92 @@ tbody tr:hover {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ===================================================== */
+/* UPDATE INVENTARIS v40 - KOLOM BARU + DOWNLOAD EXCEL */
+/* ===================================================== */
+
+.content-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-download {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  white-space: nowrap;
+}
+
+.btn-download:hover {
+  background: #bbf7d0;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+}
+
+.form-help {
+  margin-top: -2px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+table {
+  min-width: 1360px;
+}
+
+.mobile-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.mobile-meta-grid span,
+.mobile-description span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.mobile-meta-grid strong {
+  font-size: 13px;
+}
+
+.mobile-description {
+  margin-bottom: 15px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .content-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .content-header .btn-download {
+    width: 100%;
+  }
+
+  .filter-group {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .filter-group select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-meta-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

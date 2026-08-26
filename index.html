@@ -1,36 +1,23 @@
 <!doctype html>
-
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <meta
       name="description"
       content="Sistem Inventaris Mitra Sehat Maju Sentosa"
     />
-
     <title>Sistem Inventaris - Mitra Sehat Maju Sentosa</title>
-
-    <link rel="stylesheet" href="css/style.css?v=31" />
+    <link rel="stylesheet" href="css/style.css?v=40" />
   </head>
 
   <body>
-    <!-- =====================================================
-       SIDEBAR TOGGLE MOBILE
-  ====================================================== -->
-
     <input
       type="checkbox"
       id="sidebarToggle"
       class="sidebar-toggle"
       aria-hidden="true"
     />
-
-    <!-- =====================================================
-       SIDEBAR
-  ====================================================== -->
 
     <aside class="sidebar">
       <label for="sidebarToggle" class="sidebar-close" aria-label="Tutup menu">
@@ -39,32 +26,25 @@
 
       <div class="brand">
         <div class="brand-icon">📦</div>
-
         <div>
           <h2>Sistem Inventaris</h2>
-
-          <span> Mitra Sehat Maju Sentosa </span>
+          <span>Mitra Sehat Maju Sentosa</span>
         </div>
       </div>
 
       <nav class="sidebar-menu">
         <a href="#dashboard" class="menu-item active">
-          <span> ▦ </span>
-
+          <span>▦</span>
           Dashboard
         </a>
       </nav>
 
       <div class="sidebar-footer">
         Sistem Inventaris
-
         <br />
-
-        <small> Mitra Sehat Maju Sentosa </small>
+        <small>Mitra Sehat Maju Sentosa</small>
       </div>
     </aside>
-
-    <!-- OVERLAY SIDEBAR MOBILE -->
 
     <label
       for="sidebarToggle"
@@ -72,15 +52,7 @@
       aria-label="Tutup menu"
     ></label>
 
-    <!-- =====================================================
-       MAIN
-  ====================================================== -->
-
     <main class="main" id="dashboard">
-      <!-- =================================================
-         HEADER
-    ================================================== -->
-
       <header class="topbar">
         <div class="topbar-left">
           <label
@@ -93,7 +65,6 @@
 
           <div>
             <h1>Dashboard Inventaris</h1>
-
             <p>Sistem Inventaris Mitra Sehat Maju Sentosa</p>
           </div>
         </div>
@@ -103,163 +74,113 @@
         </button>
       </header>
 
-      <!-- =================================================
-         STATISTIK
-    ================================================== -->
-
       <section class="stats-grid">
-        <!-- TOTAL JENIS -->
-
         <article class="stat-card">
           <div class="stat-icon">📦</div>
-
           <div>
-            <span> Total Jenis Alat </span>
-
+            <span>Total Jenis Alat</span>
             <h2 id="totalJenis">0</h2>
           </div>
         </article>
 
-        <!-- TOTAL UNIT -->
-
         <article class="stat-card">
           <div class="stat-icon">🔢</div>
-
           <div>
-            <span> Total Unit </span>
-
+            <span>Total Unit</span>
             <h2 id="totalUnit">0</h2>
           </div>
         </article>
 
-        <!-- BAIK -->
-
         <article class="stat-card">
           <div class="stat-icon">✅</div>
-
           <div>
-            <span> Kondisi Baik </span>
-
+            <span>Kondisi Baik</span>
             <h2 id="totalBaik">0</h2>
           </div>
         </article>
 
-        <!-- BERMASALAH -->
-
         <article class="stat-card">
           <div class="stat-icon">⚠️</div>
-
           <div>
-            <span> Bermasalah </span>
-
+            <span>Bermasalah</span>
             <h2 id="totalMasalah">0</h2>
           </div>
         </article>
       </section>
 
-      <!-- =================================================
-         DATA INVENTARIS
-    ================================================== -->
-
       <section class="content-card">
         <div class="content-header">
           <div>
             <h2>Data Inventaris</h2>
-
             <p>Daftar seluruh inventaris Mitra Sehat Maju Sentosa.</p>
           </div>
-        </div>
 
-        <!-- =================================================
-           SEARCH & FILTER
-      ================================================== -->
+          <button type="button" class="btn btn-download" id="btnDownloadExcel">
+            ⬇ Download Excel
+          </button>
+        </div>
 
         <div class="toolbar">
           <div class="search-box">
-            <span> 🔍 </span>
-
+            <span>🔍</span>
             <input
               type="text"
               id="searchInput"
-              placeholder="Cari nama alat atau nomor seri..."
+              placeholder="Cari nomor barang, nomor seri, nama, lokasi..."
               autocomplete="off"
             />
           </div>
 
-          <select id="filterKeadaan">
-            <option value="">Semua Keadaan</option>
+          <div class="filter-group">
+            <select id="filterJenis">
+              <option value="">Semua Jenis</option>
+              <option value="Medis">Medis</option>
+              <option value="Non Medis">Non Medis</option>
+            </select>
 
-            <option value="Baik">Baik</option>
-
-            <option value="Rusak Ringan">Rusak Ringan</option>
-
-            <option value="Rusak Berat">Rusak Berat</option>
-
-            <option value="Dalam Perbaikan">Dalam Perbaikan</option>
-
-            <option value="Tidak Digunakan">Tidak Digunakan</option>
-          </select>
+            <select id="filterKeadaan">
+              <option value="">Semua Keadaan</option>
+              <option value="Baik">Baik</option>
+              <option value="Rusak Ringan">Rusak Ringan</option>
+              <option value="Rusak Berat">Rusak Berat</option>
+              <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+              <option value="Tidak Digunakan">Tidak Digunakan</option>
+            </select>
+          </div>
         </div>
 
-        <!-- =================================================
-           LOADING
-      ================================================== -->
-
         <div id="loading" class="loading hidden">Memuat data inventaris...</div>
-
-        <!-- =================================================
-           TABLE DESKTOP
-      ================================================== -->
 
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
                 <th>No</th>
-
+                <th>Nomor Barang</th>
                 <th>Nomor Seri</th>
-
-                <th>Nama Alat</th>
-
+                <th>Nama Alat / Barang</th>
+                <th>Jenis</th>
+                <th>Lokasi</th>
                 <th>Jumlah</th>
-
                 <th>Tahun Perolehan</th>
-
                 <th>Keadaan</th>
-
                 <th>Keterangan</th>
-
                 <th>Aksi</th>
               </tr>
             </thead>
-
             <tbody id="tableBody"></tbody>
           </table>
         </div>
 
-        <!-- =================================================
-           MOBILE
-      ================================================== -->
-
         <div id="mobileList" class="mobile-list"></div>
-
-        <!-- =================================================
-           EMPTY
-      ================================================== -->
 
         <div id="emptyState" class="empty-state hidden">
           <div>📭</div>
-
           <h3>Data tidak ditemukan</h3>
-
           <p>Belum ada data inventaris yang sesuai.</p>
         </div>
       </section>
     </main>
-
-    <!-- =====================================================
-       MODAL TAMBAH / EDIT
-  ====================================================== -->
 
     <div class="modal hidden" id="modalForm">
       <div class="modal-overlay"></div>
@@ -268,7 +189,6 @@
         <div class="modal-header">
           <div>
             <h2 id="modalTitle">Tambah Inventaris</h2>
-
             <p>Lengkapi informasi inventaris Mitra Sehat Maju Sentosa.</p>
           </div>
 
@@ -282,40 +202,40 @@
           </button>
         </div>
 
-        <!-- =================================================
-           FORM
-      ================================================== -->
-
         <form id="inventoryForm">
-          <!-- ID INTERNAL -->
-
           <input type="hidden" id="inventoryId" />
 
-          <!-- NOMOR SERI -->
-
           <div class="form-group">
-            <label for="nomorSeri">
-              Nomor Seri
+            <label for="nomorBarang">
+              Nomor Barang
               <span>*</span>
             </label>
-
             <input
               type="text"
-              id="nomorSeri"
-              placeholder="Contoh: TNS-001"
+              id="nomorBarang"
+              placeholder="Contoh: INV-MSMS-0001"
               autocomplete="off"
               required
             />
+            <small class="form-help">Nomor barang wajib dan tidak boleh sama.</small>
           </div>
 
-          <!-- NAMA ALAT -->
+          <div class="form-group">
+            <label for="nomorSeri">Nomor Seri</label>
+            <input
+              type="text"
+              id="nomorSeri"
+              placeholder="Contoh: SN-12345 (boleh kosong)"
+              autocomplete="off"
+            />
+            <small class="form-help">Boleh dikosongkan jika barang tidak memiliki nomor seri.</small>
+          </div>
 
           <div class="form-group">
             <label for="namaAlat">
-              Nama Alat
+              Nama Alat / Barang
               <span>*</span>
             </label>
-
             <input
               type="text"
               id="namaAlat"
@@ -325,7 +245,33 @@
             />
           </div>
 
-          <!-- JUMLAH + TAHUN -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jenisBarang">
+                Jenis Alat / Barang
+                <span>*</span>
+              </label>
+              <select id="jenisBarang" required>
+                <option value="" disabled>Pilih jenis barang</option>
+                <option value="Medis">Medis</option>
+                <option value="Non Medis">Non Medis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="lokasi">
+                Lokasi
+                <span>*</span>
+              </label>
+              <input
+                type="text"
+                id="lokasi"
+                placeholder="Contoh: Poli Umum / Farmasi"
+                autocomplete="off"
+                required
+              />
+            </div>
+          </div>
 
           <div class="form-row">
             <div class="form-group">
@@ -333,7 +279,6 @@
                 Jumlah
                 <span>*</span>
               </label>
-
               <input
                 type="number"
                 id="jumlah"
@@ -349,7 +294,6 @@
                 Tahun Perolehan
                 <span>*</span>
               </label>
-
               <input
                 type="number"
                 id="tahunPerolehan"
@@ -361,34 +305,23 @@
             </div>
           </div>
 
-          <!-- KEADAAN -->
-
           <div class="form-group">
             <label for="keadaan">
               Keadaan
               <span>*</span>
             </label>
-
             <select id="keadaan" required>
               <option value="" disabled>Pilih keadaan alat</option>
-
               <option value="Baik">Baik</option>
-
               <option value="Rusak Ringan">Rusak Ringan</option>
-
               <option value="Rusak Berat">Rusak Berat</option>
-
               <option value="Dalam Perbaikan">Dalam Perbaikan</option>
-
               <option value="Tidak Digunakan">Tidak Digunakan</option>
             </select>
           </div>
 
-          <!-- KETERANGAN -->
-
           <div class="form-group">
-            <label for="keterangan"> Keterangan </label>
-
+            <label for="keterangan">Keterangan</label>
             <textarea
               id="keterangan"
               rows="4"
@@ -396,13 +329,10 @@
             ></textarea>
           </div>
 
-          <!-- ACTION -->
-
           <div class="modal-actions">
             <button type="button" class="btn btn-secondary" id="btnBatal">
               Batal
             </button>
-
             <button type="submit" class="btn btn-primary" id="btnSimpan">
               Simpan Data
             </button>
@@ -411,19 +341,13 @@
       </div>
     </div>
 
-    <!-- =====================================================
-       TOAST
-  ====================================================== -->
-
     <div id="toast" class="toast" role="alert"></div>
 
-    <!-- =====================================================
-       JAVASCRIPT
-       VERSI CLOUDFLARE / IOS
-  ====================================================== -->
-
-    <script src="js/config.js?v=31"></script>
-
-    <script src="js/app.js?v=31"></script>
+    <script src="js/config.js?v=40"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="js/app.js?v=40"></script>
   </body>
 </html>
