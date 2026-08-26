@@ -1208,3 +1208,47 @@ table {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* =====================================================
+   V50 - CABANG + LOKASI ALAT
+===================================================== */
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.table-wrapper table {
+  min-width: 1450px;
+}
+
+@media (max-width: 1100px) {
+  .toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-box {
+    max-width: none;
+  }
+
+  .filter-group {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .filter-group select,
+  .toolbar select {
+    width: 100%;
+    min-width: 0;
+  }
+}

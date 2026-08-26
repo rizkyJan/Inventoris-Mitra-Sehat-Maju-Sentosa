@@ -8,7 +8,7 @@
       content="Sistem Inventaris Mitra Sehat Maju Sentosa"
     />
     <title>Sistem Inventaris - Mitra Sehat Maju Sentosa</title>
-    <link rel="stylesheet" href="css/style.css?v=40" />
+    <link rel="stylesheet" href="css/style.css?v=50" />
   </head>
 
   <body>
@@ -78,7 +78,7 @@
         <article class="stat-card">
           <div class="stat-icon">📦</div>
           <div>
-            <span>Total Jenis Alat</span>
+            <span>Total Barang / Aset</span>
             <h2 id="totalJenis">0</h2>
           </div>
         </article>
@@ -112,7 +112,7 @@
         <div class="content-header">
           <div>
             <h2>Data Inventaris</h2>
-            <p>Daftar seluruh inventaris Mitra Sehat Maju Sentosa.</p>
+            <p>Daftar seluruh barang dan aset Mitra Sehat Maju Sentosa.</p>
           </div>
 
           <button type="button" class="btn btn-download" id="btnDownloadExcel">
@@ -126,12 +126,26 @@
             <input
               type="text"
               id="searchInput"
-              placeholder="Cari nomor barang, nomor seri, nama, lokasi..."
+              placeholder="Cari nomor barang, nama, cabang, lokasi alat..."
               autocomplete="off"
             />
           </div>
 
           <div class="filter-group">
+            <select id="filterCabang">
+              <option value="">Semua Cabang</option>
+              <option value="Mitra Sehat Sukoharjo">
+                Mitra Sehat Sukoharjo
+              </option>
+              <option value="Mitra Sehat Darasan">Mitra Sehat Darasan</option>
+              <option value="Apotek Darasan">Apotek Darasan</option>
+              <option value="Apotek Carikan Farma">Apotek Carikan Farma</option>
+              <option value="Apotek Serenan Farma">Apotek Serenan Farma</option>
+              <option value="Fisioterapi">Fisioterapi</option>
+              <option value="Akupuntur">Akupuntur</option>
+              <option value="DPM">DPM</option>
+            </select>
+
             <select id="filterJenis">
               <option value="">Semua Jenis</option>
               <option value="Medis">Medis</option>
@@ -158,9 +172,10 @@
                 <th>No</th>
                 <th>Nomor Barang</th>
                 <th>Nomor Seri</th>
-                <th>Nama Alat / Barang</th>
+                <th>Nama Barang / Aset</th>
                 <th>Jenis</th>
-                <th>Lokasi</th>
+                <th>Lokasi Cabang</th>
+                <th>Lokasi Alat</th>
                 <th>Jumlah</th>
                 <th>Tahun Perolehan</th>
                 <th>Keadaan</th>
@@ -189,7 +204,7 @@
         <div class="modal-header">
           <div>
             <h2 id="modalTitle">Tambah Inventaris</h2>
-            <p>Lengkapi informasi inventaris Mitra Sehat Maju Sentosa.</p>
+            <p>Lengkapi informasi barang / aset Mitra Sehat Maju Sentosa.</p>
           </div>
 
           <button
@@ -217,7 +232,9 @@
               autocomplete="off"
               required
             />
-            <small class="form-help">Nomor barang wajib dan tidak boleh sama.</small>
+            <small class="form-help"
+              >Nomor barang wajib dan tidak boleh sama.</small
+            >
           </div>
 
           <div class="form-group">
@@ -228,18 +245,20 @@
               placeholder="Contoh: SN-12345 (boleh kosong)"
               autocomplete="off"
             />
-            <small class="form-help">Boleh dikosongkan jika barang tidak memiliki nomor seri.</small>
+            <small class="form-help"
+              >Boleh dikosongkan jika barang tidak memiliki nomor seri.</small
+            >
           </div>
 
           <div class="form-group">
             <label for="namaAlat">
-              Nama Alat / Barang
+              Nama Barang / Aset
               <span>*</span>
             </label>
             <input
               type="text"
               id="namaAlat"
-              placeholder="Contoh: Tensimeter Digital"
+              placeholder="Contoh: Tensimeter Digital / Komputer"
               autocomplete="off"
               required
             />
@@ -248,7 +267,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="jenisBarang">
-                Jenis Alat / Barang
+                Jenis Barang
                 <span>*</span>
               </label>
               <select id="jenisBarang" required>
@@ -259,18 +278,45 @@
             </div>
 
             <div class="form-group">
-              <label for="lokasi">
-                Lokasi
+              <label for="lokasiCabang">
+                Lokasi Cabang
                 <span>*</span>
               </label>
-              <input
-                type="text"
-                id="lokasi"
-                placeholder="Contoh: Poli Umum / Farmasi"
-                autocomplete="off"
-                required
-              />
+              <select id="lokasiCabang" required>
+                <option value="" disabled selected>Pilih lokasi cabang</option>
+                <option value="Mitra Sehat Sukoharjo">
+                  Mitra Sehat Sukoharjo
+                </option>
+                <option value="Mitra Sehat Darasan">Mitra Sehat Darasan</option>
+                <option value="Apotek Darasan">Apotek Darasan</option>
+                <option value="Apotek Carikan Farma">
+                  Apotek Carikan Farma
+                </option>
+                <option value="Apotek Serenan Farma">
+                  Apotek Serenan Farma
+                </option>
+                <option value="Fisioterapi">Fisioterapi</option>
+                <option value="Akupuntur">Akupuntur</option>
+                <option value="DPM Spesialis">DPM Spesialis</option>
+              </select>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="lokasiAlat">
+              Lokasi Alat
+              <span>*</span>
+            </label>
+            <input
+              type="text"
+              id="lokasiAlat"
+              placeholder="Contoh: Poli Umum / Apotek / KIA"
+              autocomplete="off"
+              required
+            />
+            <small class="form-help"
+              >Isi ruangan atau unit tempat barang berada.</small
+            >
           </div>
 
           <div class="form-row">
@@ -282,8 +328,9 @@
               <input
                 type="number"
                 id="jumlah"
-                min="0"
+                min="1"
                 step="1"
+                inputmode="numeric"
                 placeholder="1"
                 required
               />
@@ -299,6 +346,7 @@
                 id="tahunPerolehan"
                 min="1900"
                 step="1"
+                inputmode="numeric"
                 placeholder="2026"
                 required
               />
@@ -311,7 +359,7 @@
               <span>*</span>
             </label>
             <select id="keadaan" required>
-              <option value="" disabled>Pilih keadaan alat</option>
+              <option value="" disabled>Pilih keadaan barang</option>
               <option value="Baik">Baik</option>
               <option value="Rusak Ringan">Rusak Ringan</option>
               <option value="Rusak Berat">Rusak Berat</option>
@@ -343,11 +391,11 @@
 
     <div id="toast" class="toast" role="alert"></div>
 
-    <script src="js/config.js?v=40"></script>
+    <script src="js/config.js?v=50"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="js/app.js?v=40"></script>
+    <script src="js/app.js?v=50"></script>
   </body>
 </html>

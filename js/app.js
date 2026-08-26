@@ -3,7 +3,7 @@
 // FRONTEND - CLOUDFLARE WORKER VERSION
 // ======================================================
 
-console.log("INVENTARIS MSMS - CLOUDFLARE VERSION AKTIF");
+console.log("INVENTARIS MSMS V50 - CLOUDFLARE VERSION AKTIF");
 
 let inventoryData = [];
 let editingId = null;
@@ -17,6 +17,7 @@ const mobileList = document.getElementById("mobileList");
 const loading = document.getElementById("loading");
 const emptyState = document.getElementById("emptyState");
 const searchInput = document.getElementById("searchInput");
+const filterCabang = document.getElementById("filterCabang");
 const filterJenis = document.getElementById("filterJenis");
 const filterKeadaan = document.getElementById("filterKeadaan");
 
@@ -39,7 +40,8 @@ const nomorBarang = document.getElementById("nomorBarang");
 const nomorSeri = document.getElementById("nomorSeri");
 const namaAlat = document.getElementById("namaAlat");
 const jenisBarang = document.getElementById("jenisBarang");
-const lokasi = document.getElementById("lokasi");
+const lokasiCabang = document.getElementById("lokasiCabang");
+const lokasiAlat = document.getElementById("lokasiAlat");
 const jumlah = document.getElementById("jumlah");
 const tahunPerolehan = document.getElementById("tahunPerolehan");
 const keadaan = document.getElementById("keadaan");
@@ -157,7 +159,7 @@ async function postToGAS(data) {
 // ======================================================
 
 function updateDashboard() {
-  const jumlahJenis = inventoryData.length;
+  const jumlahBarang = inventoryData.length;
 
   const jumlahUnit = inventoryData.reduce(
     (total, item) => total + Number(item.jumlah || 0),
@@ -172,7 +174,7 @@ function updateDashboard() {
     .filter((item) => item.keadaan !== "Baik")
     .reduce((total, item) => total + Number(item.jumlah || 0), 0);
 
-  totalJenis.textContent = jumlahJenis;
+  totalJenis.textContent = jumlahBarang;
   totalUnit.textContent = jumlahUnit;
   totalBaik.textContent = jumlahBaik;
   totalMasalah.textContent = jumlahMasalah;
@@ -184,6 +186,7 @@ function updateDashboard() {
 
 function getFilteredData() {
   const keyword = searchInput.value.trim().toLowerCase();
+  const cabang = filterCabang.value;
   const jenis = filterJenis.value;
   const kondisi = filterKeadaan.value;
 
@@ -193,17 +196,20 @@ function getFilteredData() {
       item.nomor_seri,
       item.nama_alat,
       item.jenis_barang,
-      item.lokasi,
+      item.lokasi_cabang,
+      item.lokasi_alat,
+      item.keadaan,
       item.keterangan,
     ]
       .map((value) => String(value || "").toLowerCase())
       .join(" ");
 
     const cocokCari = !keyword || searchable.includes(keyword);
+    const cocokCabang = !cabang || item.lokasi_cabang === cabang;
     const cocokJenis = !jenis || item.jenis_barang === jenis;
     const cocokKeadaan = !kondisi || item.keadaan === kondisi;
 
-    return cocokCari && cocokJenis && cocokKeadaan;
+    return cocokCari && cocokCabang && cocokJenis && cocokKeadaan;
   });
 }
 
@@ -257,7 +263,8 @@ function renderTable(data) {
       <td>${escapeHTML(displayValue(item.nomor_seri))}</td>
       <td>${escapeHTML(displayValue(item.nama_alat))}</td>
       <td>${escapeHTML(displayValue(item.jenis_barang))}</td>
-      <td>${escapeHTML(displayValue(item.lokasi))}</td>
+      <td>${escapeHTML(displayValue(item.lokasi_cabang))}</td>
+      <td>${escapeHTML(displayValue(item.lokasi_alat))}</td>
       <td>${escapeHTML(item.jumlah)}</td>
       <td>${escapeHTML(item.tahun_perolehan)}</td>
       <td>
@@ -328,8 +335,12 @@ function renderMobile(data) {
           <strong>${escapeHTML(displayValue(item.jenis_barang))}</strong>
         </div>
         <div>
-          <span>Lokasi</span>
-          <strong>${escapeHTML(displayValue(item.lokasi))}</strong>
+          <span>Lokasi Cabang</span>
+          <strong>${escapeHTML(displayValue(item.lokasi_cabang))}</strong>
+        </div>
+        <div>
+          <span>Lokasi Alat</span>
+          <strong>${escapeHTML(displayValue(item.lokasi_alat))}</strong>
         </div>
         <div>
           <span>Jumlah</span>
@@ -397,8 +408,10 @@ function resetForm() {
 function openAddForm() {
   resetForm();
   tahunPerolehan.value = new Date().getFullYear();
+  jumlah.value = 1;
   jenisBarang.value = "Medis";
   keadaan.value = "Baik";
+  lokasiCabang.value = "";
   openModal();
 }
 
@@ -420,9 +433,10 @@ function editInventory(id) {
   nomorSeri.value = item.nomor_seri || "";
   namaAlat.value = item.nama_alat || "";
   jenisBarang.value = item.jenis_barang || "";
-  lokasi.value = item.lokasi || "";
-  jumlah.value = item.jumlah;
-  tahunPerolehan.value = item.tahun_perolehan;
+  lokasiCabang.value = item.lokasi_cabang || "";
+  lokasiAlat.value = item.lokasi_alat || "";
+  jumlah.value = item.jumlah || 1;
+  tahunPerolehan.value = item.tahun_perolehan || "";
   keadaan.value = item.keadaan || "";
   keterangan.value = item.keterangan || "";
 
@@ -446,7 +460,8 @@ inventoryForm.addEventListener("submit", async function (event) {
     nomor_seri: nomorSeri.value.trim(),
     nama_alat: namaAlat.value.trim(),
     jenis_barang: jenisBarang.value,
-    lokasi: lokasi.value.trim(),
+    lokasi_cabang: lokasiCabang.value,
+    lokasi_alat: lokasiAlat.value.trim(),
     jumlah: jumlah.value,
     tahun_perolehan: tahunPerolehan.value,
     keadaan: keadaan.value,
@@ -537,9 +552,10 @@ function downloadExcel() {
     No: index + 1,
     "Nomor Barang": displayValue(item.nomor_barang),
     "Nomor Seri": displayValue(item.nomor_seri),
-    "Nama Alat / Barang": displayValue(item.nama_alat),
-    "Jenis Alat / Barang": displayValue(item.jenis_barang),
-    Lokasi: displayValue(item.lokasi),
+    "Nama Barang / Aset": displayValue(item.nama_alat),
+    "Jenis Barang": displayValue(item.jenis_barang),
+    "Lokasi Cabang": displayValue(item.lokasi_cabang),
+    "Lokasi Alat": displayValue(item.lokasi_alat),
     Jumlah: Number(item.jumlah || 0),
     "Tahun Perolehan": Number(item.tahun_perolehan || 0),
     Keadaan: displayValue(item.keadaan),
@@ -553,8 +569,9 @@ function downloadExcel() {
     { wch: 20 },
     { wch: 20 },
     { wch: 30 },
-    { wch: 20 },
-    { wch: 22 },
+    { wch: 18 },
+    { wch: 28 },
+    { wch: 24 },
     { wch: 10 },
     { wch: 18 },
     { wch: 20 },
@@ -591,6 +608,7 @@ document.addEventListener("click", function (event) {
 });
 
 searchInput.addEventListener("input", applyFilter);
+filterCabang.addEventListener("change", applyFilter);
 filterJenis.addEventListener("change", applyFilter);
 filterKeadaan.addEventListener("change", applyFilter);
 btnTambah.addEventListener("click", openAddForm);
@@ -604,6 +622,19 @@ document.addEventListener("keydown", function (event) {
   if (event.key === "Escape" && !modalForm.classList.contains("hidden")) {
     closeModal();
   }
+});
+
+// Cegah scroll mouse mengubah nilai input number secara tidak sengaja.
+document.querySelectorAll('input[type="number"]').forEach((input) => {
+  input.addEventListener(
+    "wheel",
+    function () {
+      if (document.activeElement === input) {
+        input.blur();
+      }
+    },
+    { passive: true },
+  );
 });
 
 // ======================================================
