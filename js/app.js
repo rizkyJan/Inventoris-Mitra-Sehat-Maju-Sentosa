@@ -3,7 +3,7 @@
 // FRONTEND - CLOUDFLARE WORKER VERSION
 // ======================================================
 
-console.log("INVENTARIS MSMS V50 - CLOUDFLARE VERSION AKTIF");
+console.log("INVENTARIS MSMS V60 - CLOUDFLARE VERSION AKTIF");
 
 let inventoryData = [];
 let editingId = null;
@@ -39,6 +39,7 @@ const inventoryId = document.getElementById("inventoryId");
 const nomorBarang = document.getElementById("nomorBarang");
 const nomorSeri = document.getElementById("nomorSeri");
 const namaAlat = document.getElementById("namaAlat");
+const merkBarang = document.getElementById("merkBarang");
 const jenisBarang = document.getElementById("jenisBarang");
 const lokasiCabang = document.getElementById("lokasiCabang");
 const lokasiAlat = document.getElementById("lokasiAlat");
@@ -195,6 +196,7 @@ function getFilteredData() {
       item.nomor_barang,
       item.nomor_seri,
       item.nama_alat,
+      item.merk_barang,
       item.jenis_barang,
       item.lokasi_cabang,
       item.lokasi_alat,
@@ -262,6 +264,7 @@ function renderTable(data) {
       <td><strong>${escapeHTML(displayValue(item.nomor_barang))}</strong></td>
       <td>${escapeHTML(displayValue(item.nomor_seri))}</td>
       <td>${escapeHTML(displayValue(item.nama_alat))}</td>
+      <td>${escapeHTML(displayValue(item.merk_barang))}</td>
       <td>${escapeHTML(displayValue(item.jenis_barang))}</td>
       <td>${escapeHTML(displayValue(item.lokasi_cabang))}</td>
       <td>${escapeHTML(displayValue(item.lokasi_alat))}</td>
@@ -315,6 +318,9 @@ function renderMobile(data) {
         <div>
           <div class="mobile-card-title">
             ${escapeHTML(displayValue(item.nama_alat))}
+          </div>
+          <div class="mobile-card-serial">
+            Merk: ${escapeHTML(displayValue(item.merk_barang))}
           </div>
           <div class="mobile-card-serial">
             Nomor Barang: <strong>${escapeHTML(displayValue(item.nomor_barang))}</strong>
@@ -432,6 +438,7 @@ function editInventory(id) {
   nomorBarang.value = item.nomor_barang || "";
   nomorSeri.value = item.nomor_seri || "";
   namaAlat.value = item.nama_alat || "";
+  merkBarang.value = item.merk_barang || "";
   jenisBarang.value = item.jenis_barang || "";
   lokasiCabang.value = item.lokasi_cabang || "";
   lokasiAlat.value = item.lokasi_alat || "";
@@ -459,6 +466,7 @@ inventoryForm.addEventListener("submit", async function (event) {
     nomor_barang: nomorBarang.value.trim(),
     nomor_seri: nomorSeri.value.trim(),
     nama_alat: namaAlat.value.trim(),
+    merk_barang: merkBarang.value.trim(),
     jenis_barang: jenisBarang.value,
     lokasi_cabang: lokasiCabang.value,
     lokasi_alat: lokasiAlat.value.trim(),
@@ -553,6 +561,7 @@ function downloadExcel() {
     "Nomor Barang": displayValue(item.nomor_barang),
     "Nomor Seri": displayValue(item.nomor_seri),
     "Nama Barang / Aset": displayValue(item.nama_alat),
+    "Merk Barang / Aset": displayValue(item.merk_barang),
     "Jenis Barang": displayValue(item.jenis_barang),
     "Lokasi Cabang": displayValue(item.lokasi_cabang),
     "Lokasi Alat": displayValue(item.lokasi_alat),
@@ -569,6 +578,7 @@ function downloadExcel() {
     { wch: 20 },
     { wch: 20 },
     { wch: 30 },
+    { wch: 22 },
     { wch: 18 },
     { wch: 28 },
     { wch: 24 },

@@ -8,7 +8,7 @@
       content="Sistem Inventaris Mitra Sehat Maju Sentosa"
     />
     <title>Sistem Inventaris - Mitra Sehat Maju Sentosa</title>
-    <link rel="stylesheet" href="css/style.css?v=50" />
+    <link rel="stylesheet" href="css/style.css?v=60" />
   </head>
 
   <body>
@@ -126,7 +126,7 @@
             <input
               type="text"
               id="searchInput"
-              placeholder="Cari nomor barang, nama, cabang, lokasi alat..."
+              placeholder="Cari nomor barang, nama, merk, cabang, lokasi alat..."
               autocomplete="off"
             />
           </div>
@@ -134,9 +134,7 @@
           <div class="filter-group">
             <select id="filterCabang">
               <option value="">Semua Cabang</option>
-              <option value="Mitra Sehat Sukoharjo">
-                Mitra Sehat Sukoharjo
-              </option>
+              <option value="Mitra Sehat Sukoharjo">Mitra Sehat Sukoharjo</option>
               <option value="Mitra Sehat Darasan">Mitra Sehat Darasan</option>
               <option value="Apotek Darasan">Apotek Darasan</option>
               <option value="Apotek Carikan Farma">Apotek Carikan Farma</option>
@@ -173,6 +171,7 @@
                 <th>Nomor Barang</th>
                 <th>Nomor Seri</th>
                 <th>Nama Barang / Aset</th>
+                <th>Merk Barang / Aset</th>
                 <th>Jenis</th>
                 <th>Lokasi Cabang</th>
                 <th>Lokasi Alat</th>
@@ -232,9 +231,7 @@
               autocomplete="off"
               required
             />
-            <small class="form-help"
-              >Nomor barang wajib dan tidak boleh sama.</small
-            >
+            <small class="form-help">Nomor barang wajib dan tidak boleh sama.</small>
           </div>
 
           <div class="form-group">
@@ -245,9 +242,7 @@
               placeholder="Contoh: SN-12345 (boleh kosong)"
               autocomplete="off"
             />
-            <small class="form-help"
-              >Boleh dikosongkan jika barang tidak memiliki nomor seri.</small
-            >
+            <small class="form-help">Boleh dikosongkan jika barang tidak memiliki nomor seri.</small>
           </div>
 
           <div class="form-group">
@@ -262,6 +257,17 @@
               autocomplete="off"
               required
             />
+          </div>
+
+          <div class="form-group">
+            <label for="merkBarang">Merk Barang / Aset</label>
+            <input
+              type="text"
+              id="merkBarang"
+              placeholder="Contoh: Omron / Samsung / Daikin (boleh kosong)"
+              autocomplete="off"
+            />
+            <small class="form-help">Boleh dikosongkan jika barang / aset tidak memiliki merk.</small>
           </div>
 
           <div class="form-row">
@@ -284,17 +290,11 @@
               </label>
               <select id="lokasiCabang" required>
                 <option value="" disabled selected>Pilih lokasi cabang</option>
-                <option value="Mitra Sehat Sukoharjo">
-                  Mitra Sehat Sukoharjo
-                </option>
+                <option value="Mitra Sehat Sukoharjo">Mitra Sehat Sukoharjo</option>
                 <option value="Mitra Sehat Darasan">Mitra Sehat Darasan</option>
                 <option value="Apotek Darasan">Apotek Darasan</option>
-                <option value="Apotek Carikan Farma">
-                  Apotek Carikan Farma
-                </option>
-                <option value="Apotek Serenan Farma">
-                  Apotek Serenan Farma
-                </option>
+                <option value="Apotek Carikan Farma">Apotek Carikan Farma</option>
+                <option value="Apotek Serenan Farma">Apotek Serenan Farma</option>
                 <option value="Fisioterapi">Fisioterapi</option>
                 <option value="Akupuntur">Akupuntur</option>
                 <option value="DPM Spesialis">DPM Spesialis</option>
@@ -314,9 +314,7 @@
               autocomplete="off"
               required
             />
-            <small class="form-help"
-              >Isi ruangan atau unit tempat barang berada.</small
-            >
+            <small class="form-help">Isi ruangan atau unit tempat barang berada.</small>
           </div>
 
           <div class="form-row">
@@ -391,11 +389,11 @@
 
     <div id="toast" class="toast" role="alert"></div>
 
-    <script src="js/config.js?v=50"></script>
+    <script src="js/config.js?v=60"></script>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
       referrerpolicy="no-referrer"
     ></script>
-    <script src="js/app.js?v=50"></script>
+    <script src="js/app.js?v=60"></script>
   </body>
 </html>
